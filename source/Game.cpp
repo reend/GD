@@ -35,6 +35,32 @@ bool Game::Init()
 	auto shaderProgram = graphicsAPI.CreateShaderProgram(vertexShaderSource, fragmentShaderSource);
 	m_material.SetShaderProgram(shaderProgram);
 
+    std::vector<float> vertices = {
+        // position (rectanble)     // colors (red, green, blue, yellow)
+        0.5f, 0.5f, 0.0f,           1.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f,          0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f,         0.0f, 0.0f, 1.0f,
+        0.5f, -0.5f, 0.0f,          1.0f, 1.0f, 0.0f,
+    };
+
+    // indices for reusing vertices, 2 - is common diagonale between triangles in rectangle
+    std::vector<unsigned int> indices = {
+        0, 1, 2, // one part of rectangle (left triangle)
+        0, 2, 3  // second part of rectangle (right trianble)
+    };
+
+    eng::VertexLayout vertexLayout;
+
+    // position
+	vertexLayout.elements.push_back({ 0, 3, GL_FLOAT, 0 });
+
+    // color
+	vertexLayout.elements.push_back({ 1, 3, GL_FLOAT, sizeof(float) * 3 });
+
+	vertexLayout.stride = sizeof(float) * 6;
+
+	m_mesh = std::make_unique<eng::Mesh>(vertexLayout, vertices, indices);
+
 	return true;
 }
 void Game::Update(float deltaTime)
