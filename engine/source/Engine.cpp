@@ -6,6 +6,24 @@
 
 namespace eng
 {
+	void keyCallback(GLFWwindow* window, int key, int, int action, int)
+	{
+		auto& inputManager = eng::Engine::GetInstance().GetInputManager();
+		if (action == GLFW_PRESS)
+		{
+			inputManager.SetKeyPressed(key, true);
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			inputManager.SetKeyPressed(key, false);
+		}
+	}
+
+	Engine& Engine::GetInstance()
+	{
+		static Engine instance;
+		return instance;
+	}
 	bool Engine::Init(int width, int height)
 	{
 		if (!m_application)
@@ -28,6 +46,8 @@ namespace eng
 			glfwTerminate();
 			return false;
 		}
+
+		glfwSetKeyCallback(m_window, keyCallback);
 
 		glfwMakeContextCurrent(m_window);
 
@@ -76,5 +96,10 @@ namespace eng
 	Application* Engine::GetApplication() 
 	{
 		return m_application.get();
+	}
+
+	InputManager& Engine::GetInputManager()
+	{
+		return m_inputManager;
 	}
 }
